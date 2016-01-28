@@ -18,9 +18,10 @@ def load_definition(filename):
 def load_definitions(filenames):
     return [load_definition(f) for f in filenames]
 
-def reproduce(definitions, seed=str(random.random()), mutation_rate=0.0):
-    random.seed(seed)
-    return dict([(k, combine_and_mutate(k, definitions, mutation_rate)) for k in definitions[0].keys()])
+def reproduce(definitions, seed=None, mutation_rate=0.0):
+    if seed:
+        random.seed(seed)
+    return dict([(k, combine_and_mutate(k, definitions, mutation_rate)) for k in definitions[0].keys()]), seed
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
@@ -38,7 +39,7 @@ if __name__ == "__main__":
         if not seed:
             seed = str(random.random())
             sys.stderr.write("Seed: " + seed + "\n")
-        new_sound = reproduce(definitions, seed, mutation_rate)
+        new_sound, seed_used = reproduce(definitions, seed, mutation_rate)
         print json.dumps(new_sound, indent=2)
     else:
         print "Usage:", sys.argv[0], "SOUND-DEFINITION.sfxr.json SOUND-DEFINITION-1.sfxr.json ...", "[--seed=SEED]", "[MUTATION-RATE]"
