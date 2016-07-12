@@ -5,10 +5,14 @@ import os
 import json
 import random
 
-def combine_and_mutate(k, definitions, mutation_rate):
-    gene = random.choice(definitions)[k]
+def combine_and_mutate(k, seed, definitions, mutation_rate):
+    if seed:
+        rnd = random.Random(seed)
+    else:
+        rnd = random.Random()
+    gene = rnd.choice(definitions)[k]
     if type(gene) == float and mutation_rate:
-        return max(0, min(1.0, gene + (random.random() * mutation_rate)))
+        return max(0, min(1.0, gene + (rnd.random() * mutation_rate)))
     else:
         return gene
 
@@ -19,9 +23,7 @@ def load_definitions(filenames):
     return [load_definition(f) for f in filenames]
 
 def reproduce(definitions, seed=None, mutation_rate=0.0):
-    if seed:
-        random.seed(seed)
-    return dict([(k, combine_and_mutate(k, definitions, mutation_rate)) for k in definitions[0].keys()]), seed
+    return dict([(k, combine_and_mutate(k, seed, definitions, mutation_rate)) for k in definitions[0].keys()]), seed
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
